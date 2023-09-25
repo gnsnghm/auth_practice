@@ -1,0 +1,27 @@
+nav {
+  margin-bottom: 20px;
+}
+
+.box {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 4px;
+  width: 300px;
+  margin: 0 atuo;
+  background-color: #f1f1f1;
+  color:#ccc
+}
+
+button {
+  background-color: #4f46e5;
+  font-weight: bold;
+  border-radius: 9999px;
+  padding: 1rem 2rem;
+  color: #fff;
+  margin-left: auto;
+  display: flex;
+  align-self: flex-end;
+}
