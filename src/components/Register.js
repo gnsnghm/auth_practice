@@ -1,80 +1,69 @@
-import { useState, useEffect } from "react";
+import React from "react";
 import styles from "../index.module.css"
+import { Button, Form, FormGroup, Label, Input } from 'reactstrap';
 import { useNavigate } from "react-router-dom";
 
-const Register = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [nickname, setNickname] = useState('');
-  const navigate = useNavigate();
-  useEffect(() => {
-    // マウント処理など記述
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const formData = {
-        email,
-        password,
-        nickname // nickname フォームデータに含める
-      };
-
-      const req = {
-        method: 'post',
-        headers: { 'Content-type': 'application/json' },
-        body: JSON.stringify(formData)
-      };
-
-      // テストで使って良い奴っぽい。これをbackendからのJSONに変更したらいいっぽい
-      const apiUrl = 'https://jsonplaceholder.typicode.com/users';
-      // backendに投げて登録してもらって ok を throw してもらう必要がある
-
-      const res = await fetch(apiUrl, req);
-      if (!res.ok) {
-        throw new Error('Registrain failed');
-      }
-
-      const data = await Response.json();
-      console.log('Registration successful!', data);
-      // トークンの保存処理(nickname を文字列としてローカルストレージに保存)
-      localStorage.setItem('nickname', JSON.stringify(nickname));
-    } catch (err) {
-      console.error("Registration failed:", err);
-    }
+class Register extends React.Component {
+  state = {
+    id: 0,
+    uname: '',
+    email: '',
+    age: 0,
+    password: ''
   };
 
-  const handeleRegiser = () => {
-    // Registerボタンが押下されたときの処理を記述
-    fetchData();
-    navigate('/login'); // 登録後にログインページへリダイレクト
-  };
+  onChange = e => {
+    this.setState({ [e.target.id]: e.target.value })
+  }
 
-  return (
-    <div className={styles['box']}>
-      <h2>Register(新規登録)</h2>
-      <form>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)} />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)} />
-        <input
-          type="text"
-          placeholder="Nickname"
-          value={nickname}
-          onChange={(e) => setNickname(e.target.value)} />
-        <button type="button" onClick={handeleRegiser}>
-          Register
-        </button>
-      </form>
-    </div>
-  );
-}
+  submitFormAdd = e => {
+    e.preventDefault();
+    console.log(this.state);
+    fetch("http://localhost:8989/regist", {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        uname: this.state.uname,
+        age: this.state.age,
+        email: this.state.email,
+        password: this.state.password
+      })
+    })
+      .then(response => response.json())
+      .then(item => {
+        // 送信が上手くいったらLoginページへ戻る処理を追加する
+        if (!Array.isArray(item)) {
+          console.log("failure");
+        }
+      })
+      .catch(err => console.log(err));
+  }
+
+  render() {
+    return (
+      <div className={styles['box']} >
+        <h2>Register(新規登録)</h2>
+        <Form onSubmit={this.submitFormAdd}>
+          <FormGroup>
+            <Label for="uname">ユーザ名</Label>
+            <Input type="text" name="uname" id="uname" onChange={this.onChange} />
+            <Label for="age">年齢</Label>
+            <Input type="text" name="age" id="age" onChange={this.onChange} />
+            <Label for="email">メールアドレス</Label>
+            <Input type="text" name="email" id="email" onChange={this.onChange} />
+            <Label for="password">パスワード</Label>
+            <Input type="password" name="password" id="password" onChange={this.onChange} />
+          </FormGroup>
+          <Button>
+            Register
+          </Button>
+        </Form>
+      </div>
+    );
+  }
+};
+
 
 export default Register;
