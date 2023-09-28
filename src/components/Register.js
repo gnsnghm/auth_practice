@@ -11,6 +11,7 @@ class Register extends React.Component {
     age: 0,
     password: ''
   };
+  navigate = useNavigate();
 
   onChange = e => {
     this.setState({ [e.target.id]: e.target.value })
@@ -34,7 +35,9 @@ class Register extends React.Component {
       .then(response => response.json())
       .then(item => {
         // 送信が上手くいったらLoginページへ戻る処理を追加する
-        if (!Array.isArray(item)) {
+        if (Array.isArray(item)) {
+          this.navigate('/login');
+        } else {
           console.log("failure");
         }
       })
